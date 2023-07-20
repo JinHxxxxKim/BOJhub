@@ -1,5 +1,3 @@
-
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -11,30 +9,30 @@ public class Main {
         StringTokenizer st = new StringTokenizer(br.readLine());
         int N = Integer.parseInt(st.nextToken());
         int M = Integer.parseInt(st.nextToken());
-        int[] array = new int[N + 1];
-        array[0] = 0;
-
-        //==이분탐색사용 변수==//
-        int left = -1;
-        int right = 0;
-        int mid = -1;
-        //=================//
-
+        int[] array = new int[N];
         st = new StringTokenizer(br.readLine());
-        for (int i = 1; i <= N; ++i) {
+        int lowerBound = Integer.MIN_VALUE;
+        int upperBound = 0;
+        for (int i = 0; i < N; ++i) {
             array[i] = Integer.parseInt(st.nextToken());
-            left = Math.max(array[i], left);
-            right += array[i];
+            upperBound += array[i];
+            lowerBound = Math.max(lowerBound, array[i]);
         }
-        mid = (left + right) / 2;
-        int ans = mid;
-        while (left <= right) {
-            int blueRaySize = mid;
-            int sum = 0;
-            int blueRayCnt = 0;
+        //System.out.println(Arrays.toString(array));
 
-            for (int i = 1; i <= N; ++i) {
-                if ((sum + array[i]) > blueRaySize) {
+        int ans = Integer.MAX_VALUE;
+
+        while (lowerBound <= upperBound) {
+            int mid = (lowerBound + upperBound) / 2; // 블루레이 크기
+//            System.out.println("=================");
+//            System.out.println("lowerBound = " + lowerBound);
+//            System.out.println("mid = " + mid);
+//            System.out.println("upperBound = " + upperBound);
+            int sum = 0;
+            int blueRayCnt =0;
+
+            for (int i = 0; i < N; ++i) {
+                if (array[i] + sum > mid) {
                     sum = 0;
                     blueRayCnt++;
                 }
@@ -44,14 +42,17 @@ public class Main {
                 blueRayCnt++;
             }
 
+//            System.out.println("++++++++++++++++++++");
+//            System.out.println("blueRayCnt = " + blueRayCnt);
             if (blueRayCnt > M) {
-                left = mid + 1;
+                lowerBound = mid + 1;
+                continue;
             } else {
-                ans = blueRaySize > ans ? ans : blueRaySize;
-                right = mid - 1;
+                upperBound = mid - 1;
             }
-            mid = (left + right) / 2;
+            ans = Math.min(ans, mid);
+
         }
-        System.out.println(left);
+        System.out.println(ans);
     }
 }
