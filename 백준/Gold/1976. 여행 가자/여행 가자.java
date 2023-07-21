@@ -17,40 +17,39 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         M = Integer.parseInt(br.readLine());
-        adMatrix = new int[N + 1][N + 1];
-        for (int i = 1; i <= N; ++i) {
+        adMatrix = new int[N][N];
+        for (int i = 0; i < N; ++i) {
             StringTokenizer st = new StringTokenizer(br.readLine());
-            for (int j = 1; j <= N; ++j) {
+            for (int j = 0; j < N; ++j) {
                 adMatrix[i][j] = Integer.parseInt(st.nextToken());
             }
         }
-
         tripSeq = new int[M];
 
         StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 0; i < M; ++i) {
             tripSeq[i] = Integer.parseInt(st.nextToken());
         }
-
         // 모든 여행경로에 속하는 노드가 동일한 루트를 가지고 있어야함
         // 그럼, 노드에 대한 루트 노드 정보가 필요
 
-        rootInfo = new int[N + 1];
-        for (int i = 1; i <= N; ++i) {
+        rootInfo = new int[N];
+        for (int i = 0; i < N; ++i) {
             rootInfo[i] = i;
         }
 
-        for (int i = 1; i <= N; ++i) {
-            for (int j = 1; j <= N; ++j) {
+        for (int i = 0; i < N; ++i) {
+            for (int j = 0; j < N; ++j) {
                 if (adMatrix[i][j] == 1) {
+                    // union
                     union(i, j);
                 }
             }
         }
-
-        int root = rootInfo[tripSeq[0]];
+        
+        int root = rootInfo[tripSeq[0]-1];
         for (int i = 0; i < M; ++i) {
-            if (root != rootInfo[tripSeq[i]]) {
+            if (root != rootInfo[tripSeq[i] - 1]) {
                 System.out.println("NO");
                 return;
             }
@@ -61,7 +60,6 @@ public class Main {
     private static void union(int node1, int node2) {
         int node1_root = find(node1);
         int node2_root = find(node2);
-
         if (node1_root != node2_root) {
             if (node1_root < node2_root) {
                 rootInfo[node2_root] = node1_root;
