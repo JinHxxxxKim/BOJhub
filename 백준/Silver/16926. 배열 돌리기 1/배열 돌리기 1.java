@@ -16,7 +16,7 @@ public class Main {
 	private static int N, M, R;
 	private static int[][] map;
 	private static int[][] ans;
-	
+
 	public static void main(String[] args) throws Exception {
 		st = new StringTokenizer(br.readLine().trim());
 		N = Integer.parseInt(st.nextToken());
@@ -35,43 +35,47 @@ public class Main {
 			int startRow = currLayer;
 			int startCol = currLayer;
 			int startDir = 0;
-			
+
 			int goalRow = currLayer;
 			int goalCol = currLayer;
 			int goalDir = 0;
+
+			int newRotateCnt = ((N - currLayer * 2) + (M - currLayer * 2)) * 2 - 4;
 			
+			newRotateCnt = R % newRotateCnt;
 			
-			
-			for (int rotateCnt = 0; rotateCnt < R; ++rotateCnt) {
-				if (goalRow + dx[goalDir] >= N - currLayer || goalRow + dx[goalDir] < 0 + currLayer || goalCol + dy[goalDir] >= M - currLayer || goalCol + dy[goalDir] < 0 + currLayer) {
+			for (int rotateCnt = 0; rotateCnt < newRotateCnt; ++rotateCnt) {
+				if (goalRow + dx[goalDir] >= N - currLayer || goalRow + dx[goalDir] < 0 + currLayer
+						|| goalCol + dy[goalDir] >= M - currLayer || goalCol + dy[goalDir] < 0 + currLayer) {
 					// 방향 전환
 					goalDir = (goalDir + 1) % 4;
 				}
 				goalRow += dx[goalDir];
 				goalCol += dy[goalDir];
 			}
-			
-			while(true) {
-				
-				if (goalRow + dx[goalDir] >= N - currLayer || goalRow + dx[goalDir] < 0 + currLayer || goalCol + dy[goalDir] >= M - currLayer || goalCol + dy[goalDir] < 0 + currLayer) {
+
+			while (true) {
+
+				if (goalRow + dx[goalDir] >= N - currLayer || goalRow + dx[goalDir] < 0 + currLayer
+						|| goalCol + dy[goalDir] >= M - currLayer || goalCol + dy[goalDir] < 0 + currLayer) {
 					// 방향 전환
 					goalDir = (goalDir + 1) % 4;
 				}
-				
-				
-				if (startRow + dx[startDir] >= N - currLayer || startRow + dx[startDir] < 0 + currLayer || startCol + dy[startDir] >= M - currLayer || startCol + dy[startDir] < 0 + currLayer) {
+
+				if (startRow + dx[startDir] >= N - currLayer || startRow + dx[startDir] < 0 + currLayer
+						|| startCol + dy[startDir] >= M - currLayer || startCol + dy[startDir] < 0 + currLayer) {
 					// 방향 전환
 					startDir = (startDir + 1) % 4;
 				}
 				ans[goalRow][goalCol] = map[startRow][startCol];
-				
+
 				goalRow += dx[goalDir];
 				goalCol += dy[goalDir];
-				
+
 				startRow += dx[startDir];
 				startCol += dy[startDir];
-				
-				if(startRow == currLayer && startCol == currLayer) {
+
+				if (startRow == currLayer && startCol == currLayer) {
 					break;
 				}
 			}
