@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
  * 
  * 1. 필요한 입력을 모두 받아서 초기화한다.
  * 2. 2차원이 아닌 3차원 배열 사용
- * 3. visited 배열은 2차원 사용
+ * 3. visited 배열, dist 배열 모두 3차원 배열 사용
  * 4. 벽을 뚫었다면[][][1]로 내려가서 탐색
  */
 public class Main {
@@ -28,6 +28,7 @@ public class Main {
 	private static int[][][] dist;
 	
 	public static void main(String[] args) throws Exception {
+		
 		st = new StringTokenizer(br.readLine().trim());
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
@@ -52,8 +53,8 @@ public class Main {
 		}
 
 		bfs();
-//		for (int i = 0; i < N; ++i)
-//			System.out.println(Arrays.toString(dist[i]));
+		
+		// 벽 뚫고 이동([1]) vs 벽 안뚫고 이동([0]) 중 더 가까운 거리 선택
 		int ans = Math.min(dist[N - 1][M - 1][0], dist[N - 1][M - 1][1]);
 		if (ans == Integer.MAX_VALUE) {
 			System.out.println(-1);
@@ -64,6 +65,8 @@ public class Main {
 
 	private static void bfs() {
 		Queue<int[]> q = new ArrayDeque<>();
+		// BFS 초기 세팅
+		// 0, 0에서 출발
 		q.offer(new int[] { 0, 0, 0 });
 		visited[0][0][0] = true;
 		dist[0][0][0] = 1;
@@ -71,12 +74,16 @@ public class Main {
 			int[] currNode = q.poll();
 			int currRow = currNode[0];
 			int currCol = currNode[1];
-			int isAlreadyBreak = currNode[2]; // 0->아직, 1->이미
-
+			// 0->아직 벽을 뚫은 적이 없다. 
+			// 1->이미 벽을 한번 뚫었다.
+			int isAlreadyBreak = currNode[2]; 
+			
+			// 탈출 조건(종료 지점을 만나면)
 			if (currRow == N - 1 && currCol == M - 1) {
 				break;
 			}
-
+			
+			// 4방 탐색
 			for (int dir = 0; dir < 4; ++dir) {
 				int tempRow = currRow + dx[dir];
 				int tempCol = currCol + dy[dir];
@@ -90,28 +97,29 @@ public class Main {
 
 				if (isAlreadyBreak == 1) {
 					// 벽뚫기 기회 이미 사용
-					// 또 벽이라면
-//					System.out.println("aaaa");
+					// 또 벽이라면 PASS
 					if (map[tempRow][tempCol] == 1) {
-//						System.out.println("CURRROW: "+currRow);
-//						System.out.println("CURRCOL: "+currCol);
 						continue;
 					}
-//					System.out.println("asd");
+					// 최적화를 위한 방문처리 
 					visited[tempRow][tempCol][1] = true;
-					dist[tempRow][tempCol][1] = Math.min(dist[tempRow][tempCol][1], dist[currRow][currCol][1] + 1);
+					// 해당 위치 (tempRow, tempCol)이 이미 방문한
+					dist[tempRow][tempCol][1] = dist[currRow][currCol][1] + 1;
+					// dist[tempRow][tempCol][1] = Math.min(dist[tempRow][tempCol][1], dist[currRow][currCol][1] + 1);
 					q.offer(new int[] { tempRow, tempCol, 1 });
 				} else {
 					// 벽뚫기 기회 아직 사용 X
 					if (map[tempRow][tempCol] == 1) {
+						// 이번에 만난 위치가 벽일 경우
 						visited[tempRow][tempCol][1] = true;
-						
+						// 기존에 벽을 뚫고 방문한 적이 있을 수 있으므로, 비교를 통해 갱신
 						dist[tempRow][tempCol][1] = Math.min(dist[tempRow][tempCol][1], dist[currRow][currCol][0] + 1);
-						
 						q.offer(new int[] { tempRow, tempCol, 1 });
 					} else {
+						// 이번에 만난 위치가 그냥 길인 경우
 						visited[tempRow][tempCol][0] = true;
-						dist[tempRow][tempCol][0] = Math.min(dist[tempRow][tempCol][0], dist[currRow][currCol][0] + 1);
+						dist[tempRow][tempCol][0] = dist[currRow][currCol][0] + 1;
+						// dist[tempRow][tempCol][0] = Math.min(dist[tempRow][tempCol][0], dist[currRow][currCol][0] + 1);
 						q.offer(new int[] { tempRow, tempCol, 0 });
 					}
 				}
