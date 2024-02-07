@@ -1,5 +1,4 @@
 
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
@@ -88,6 +87,8 @@ public class Main{
 			// 현재 위치까지 도달했을 때 벽을 부순 횟수
 			int currBreakCnt = currNode[2];
 
+			if(currRow == N-1 && currCol == M-1)
+				break;
 			// 4방 탐색
 			for (int dir = 0; dir < 4; ++dir) {
 				// 4방 탐색 행
