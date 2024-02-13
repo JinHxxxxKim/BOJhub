@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
@@ -52,20 +53,14 @@ public class Main {
 		}
 		// 탐색 전 변수 초기화
 		maxDist = 1;
+		isVisited[0][0] = true;
+		alphaVisited[map[0][0]-'A'] = true;
 		dist[0][0] = 1;
-		dfs(0, 0, 1);
+		dfs(0, 0);
 		System.out.println(maxDist);
 	}
 
-	private static void dfs(int row, int col, int currDist) {
-		if(isVisited[row][col])
-			return;
-		if(alphaVisited[map[row][col] - 'A'])
-			return;
-		// 방문처리 및 알파벳 사용처리
-		isVisited[row][col] = true;
-		alphaVisited[map[row][col] - 'A'] = true;
-		
+	private static void dfs(int row, int col) {
 		// 사방탐색
 		for (int dir = 0; dir < 4; ++dir) {
 			int tempRow = row + dx[dir];
@@ -81,14 +76,18 @@ public class Main {
 			if (alphaVisited[map[tempRow][tempCol] - 'A'])
 				continue;
 			
+			// 거리 계산
+			dist[tempRow][tempCol] = dist[row][col] + 1;
 			// 최대 거리 갱신
-			maxDist = Math.max(maxDist, currDist + 1);
-			dfs(tempRow, tempCol, currDist + 1);
-
+			maxDist = Math.max(maxDist, dist[tempRow][tempCol]);
+			
+			// 방문처리 및 알파벳 사용처리
+			isVisited[tempRow][tempCol] = true;
+			alphaVisited[map[tempRow][tempCol] - 'A'] = true;
+			dfs(tempRow, tempCol);
+			// 재방문을 위해 방문처리 및 알파벳 사용처리 취소
+			isVisited[tempRow][tempCol] = false;
+			alphaVisited[map[tempRow][tempCol] - 'A'] = false;
 		}
-		
-		// 재방문을 위해 방문처리 및 알파벳 사용처리 취소
-		isVisited[row][col] = false;
-		alphaVisited[map[row][col] - 'A'] = false;
 	}
 }
