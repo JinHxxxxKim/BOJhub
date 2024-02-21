@@ -11,11 +11,10 @@ import java.util.StringTokenizer;
  * 1. 사람의 수 N (5 ≤ N ≤ 2000)과 친구 관계의 수 M (1 ≤ M ≤ 2000)을 입력받는다.
  * 2. 친구 관계를 입력받는다.
  * 3. 각 정점에서 DFS 탐색을 진행한다.
- * 		- 재귀의 깊이가 4가 될 경우 문제의 조건이 만족된 것이므로 종료한다.
+ * 		- 재귀의 깊이가 5가 될 경우 문제의 조건이 만족된 것이므로 종료한다.
  */
 public class Main {
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	private static StringBuilder sb = new StringBuilder();
 	private static StringTokenizer st;
 
 	private static List<Integer>[] adList;
@@ -45,9 +44,10 @@ public class Main {
 		
 		// 0번 정점부터 N-1번 정점까지 DFS 순회
 		for(int nodeNum = 0;nodeNum<N;++nodeNum) {
-//			System.out.println("============");
 			isVisited = new boolean[N];
 			isCorrectConnection(nodeNum, 0);
+			if(flag)
+				break;
 		}
 		
 		if(flag) {
