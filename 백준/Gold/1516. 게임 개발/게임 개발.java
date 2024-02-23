@@ -11,17 +11,9 @@ import java.util.StringTokenizer;
 /**
  * @author JinHxxxxKim
  * 
- * 최종적으로 어떤 건물들이 필요한가
- * 
  * 1. 건물에 대한 정보를 노드로, 선행 건물에 대한 정보를 엣지로 인식
  * 2. A건물이 B건물의 선행건물일 경우, A -> B 의 형태로 그래프 형성
  * 3. 위상정렬을 수행하면서, 각 노드(건물)을 방문할 때(in-degree==0 일 떄) 소요시간을 함께 저장한다.
- * 
- * 1. 건물에 대한 정보를 노드로, 선행 건물에 대한 정보를 엣지로 인식
- * 2. A건물이 B건물의 선행건물일 경우, A -> B 의 형태로 그래프 형성
- * 		2-1. 필요 건물을 함께 저장
- * 3. 위상정렬을 통해 건물을 짓는 순서를 결정 -> 리스트에 저장
- * 4. 순서대로 순회하며, 필요건물중 최대 시간 + 자신의 시간
  */
 public class Main {
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -30,25 +22,18 @@ public class Main {
 
 	private static int N; // 건물 개수
 	private static List<Integer>[] adList; // 인접리스트
-	private static List<Integer>[] reqNodes; // 필요 건물 저장
-	private static List<Integer> seq; // 건물 짓는 순서
 	private static int[] inDgree; // 진입차수
 	private static int[] reqTime; // 건물을 짓는데 걸리는 시간
 	private static int[] totalTime; // 선행 건물을 짓고 최종적으로 걸리는 시간
 	
-	
 	public static void main(String[] args) throws Exception {
 		N = Integer.parseInt(br.readLine().trim());
 		adList = new List[N + 1];
-		reqNodes = new List[N + 1];
 		reqTime = new int[N+1];
 		totalTime = new int[N+1];
 		inDgree = new int[N+1];
-		seq = new ArrayList<>();
-		
 		for(int idx = 1;idx<N+1;++idx) {
 			adList[idx] = new ArrayList<Integer>();
-			reqNodes[idx] = new ArrayList<Integer>();
 		}
 		for(int idx = 1;idx<N+1;++idx) {
 			st = new StringTokenizer(br.readLine().trim());
@@ -56,7 +41,6 @@ public class Main {
 			int reqNode = Integer.parseInt(st.nextToken());
 			while (reqNode != -1) {
 				adList[reqNode].add(idx);
-				reqNodes[idx].add(reqNode);
 				reqNode = Integer.parseInt(st.nextToken());
 				inDgree[idx]++;
 			}
@@ -80,27 +64,20 @@ public class Main {
 			int currNode = q.poll();
 //			System.out.println("currNode: "+currNode);
 //			System.out.println(Arrays.toString(totalTime));
-			seq.add(currNode);
+
 			for (int adNode : adList[currNode]) {
 				--inDgree[adNode];
 				if (inDgree[adNode] == 0) {
 					q.offer(adNode);
+				}else {
+					
 				}
-				
+				totalTime[adNode] = Math.max(totalTime[currNode] + reqTime[adNode], totalTime[adNode]);
 			}
-		}
-		for (int currNode : seq) {
-			int ans = 0;
-			for (int reqNode : reqNodes[currNode]) {
-				ans = Integer.max(ans, totalTime[reqNode]);
-			}
-			totalTime[currNode] = Integer.max(ans + reqTime[currNode], reqTime[currNode]);
 		}
 		for (int idx = 1; idx < N + 1; ++idx) {
 			sb.append(totalTime[idx]).append("\n");
 		}
-		
-		
 		System.out.println(sb);
 	}
 }
