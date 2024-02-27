@@ -2,10 +2,7 @@
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
@@ -27,88 +24,102 @@ public class Main {
 	private static StringTokenizer st;
 
 	private static final int INF = Integer.MAX_VALUE;
-
+	
 	static int V, E;
-	static List<Node>[] adList;
+	static Node[] adList;
 	static boolean[] isVisited;
 	static int[] dist;
 	static int startNode;
-
+	
 	public static void main(String[] args) throws Exception {
 		st = new StringTokenizer(br.readLine().trim());
 		V = Integer.parseInt(st.nextToken());
 		E = Integer.parseInt(st.nextToken());
 		startNode = Integer.parseInt(br.readLine().trim());
-
-		adList = new List[V + 1];
-		isVisited = new boolean[V + 1];
-		dist = new int[V + 1];
+		
+		adList = new Node[V+1];
+		isVisited = new boolean[V+1];
+		dist = new int[V+1];
 		Arrays.fill(dist, INF);
 		dist[startNode] = 0;
-
+		
 		// 인접 리스트 생성
-		for (int idx = 1; idx <= V; ++idx)
-			adList[idx] = new ArrayList<>();
-		for (int edgeCnt = 0; edgeCnt < E; ++edgeCnt) {
+		for(int edgeCnt = 0; edgeCnt<E;++edgeCnt) {
 			st = new StringTokenizer(br.readLine().trim());
 			int srcNode = Integer.parseInt(st.nextToken());
 			int destNode = Integer.parseInt(st.nextToken());
 			int weight = Integer.parseInt(st.nextToken());
-
-			adList[srcNode].add(new Node(destNode, weight));
+			
+			adList[srcNode] = new Node(adList[srcNode], destNode, weight);
 		}
-
+		
 		// 다익스트라 알고리즘 시작
 		PriorityQueue<Node> pq = new PriorityQueue<>();
 		pq.add(new Node(startNode, 0));
 		int visitCnt = 0;
-		while (!pq.isEmpty()) {
+		while(!pq.isEmpty()) {
+			
 			Node currNode = pq.poll();
 			int currNodeNum = currNode.nodeNum;
 			int currCost = currNode.weight;
-			if (isVisited[currNodeNum])
+	
+			if(isVisited[currNodeNum])
 				continue;
-			isVisited[currNodeNum] = true;
+			
 			visitCnt++;
-			if (visitCnt == V) {
+			if(visitCnt == V)
 				break;
-			}
+			isVisited[currNodeNum] = true;
+			
 			// 인접 노드 탐색
-			for (Node adNode : adList[currNodeNum]) {
-				if (!isVisited[adNode.nodeNum] && currCost + adNode.weight < dist[adNode.nodeNum]) {
+			Node adNode = adList[currNodeNum];
+			while (adNode != null) {
+				if (!isVisited[adNode.nodeNum] 
+						&& currCost + adNode.weight < dist[adNode.nodeNum]) {
 					dist[adNode.nodeNum] = currCost + adNode.weight;
 					pq.offer(new Node(adNode.nodeNum, dist[adNode.nodeNum]));
 				}
+				
+				adNode = adNode.next;
 			}
 		}
-		for (int idx = 1; idx <= V; ++idx) {
-			if (dist[idx] == Integer.MAX_VALUE)
+		for(int idx = 1;idx<=V;++idx) {
+			if(dist[idx] == Integer.MAX_VALUE)
 				sb.append("INF").append("\n");
 			else
 				sb.append(dist[idx]).append("\n");
 		}
-
+		
+		
 		System.out.println(sb);
 	}
-
+	
 	// 정점 클래스
-	static class Node implements Comparable<Node> {
+	static class Node implements Comparable<Node>{
+		Node next;
 		int nodeNum, weight;
 
+		public Node(Node next, int nodeNum, int weight) {
+			super();
+			this.next = next;
+			this.nodeNum = nodeNum;
+			this.weight = weight;
+		}
+		
 		public Node(int nodeNum, int weight) {
 			this.nodeNum = nodeNum;
 			this.weight = weight;
 		}
 
 		@Override
-		public int compareTo(Node o) {
-			return Integer.compare(this.weight, o.weight);
+		public String toString() {
+			return "Node [next=" + next + ", nodeNum=" + nodeNum + ", weight=" + weight + "]";
 		}
 
 		@Override
-		public String toString() {
-			return "Node [nodeNum=" + nodeNum + ", weight=" + weight + "]";
+		public int compareTo(Node o) {
+			return Integer.compare(this.weight, o.weight);
 		}
-
+		
 	}
 }
