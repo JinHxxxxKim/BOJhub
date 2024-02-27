@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 /**
- * @author 김진형
+ * @author 
  * 
  * 다익스트라 알고리즘
  * 
@@ -27,13 +27,13 @@ public class Main {
 	private static StringTokenizer st;
 
 	private static final int INF = Integer.MAX_VALUE;
-	
+
 	static int V, E;
 	static List<Node>[] adList;
 	static boolean[] isVisited;
 	static int[] dist;
 	static int startNode;
-	
+
 	public static void main(String[] args) throws Exception {
 		st = new StringTokenizer(br.readLine().trim());
 		V = Integer.parseInt(st.nextToken());
@@ -58,12 +58,6 @@ public class Main {
 			adList[srcNode].add(new Node(destNode, weight));
 		}
 
-		for (int idx = 1; idx <= V; ++idx) {
-			Collections.sort(adList[idx]);
-		}
-//		for (int idx = 1; idx <= V; ++idx) {
-//			System.out.println(adList[idx]);
-//		}
 		// 다익스트라 알고리즘 시작
 		PriorityQueue<Node> pq = new PriorityQueue<>();
 		pq.add(new Node(startNode, 0));
@@ -72,13 +66,9 @@ public class Main {
 			Node currNode = pq.poll();
 			int currNodeNum = currNode.nodeNum;
 			int currCost = currNode.weight;
-			if(isVisited[currNodeNum])
+			if (isVisited[currNodeNum])
 				continue;
 			isVisited[currNodeNum] = true;
-//			System.out.println(Arrays.toString(dist));
-//			System.out.println("currNodeNum:" + currNodeNum);
-//			System.out.println("currCost: " + currCost);
-			
 			visitCnt++;
 			if (visitCnt == V) {
 				break;
@@ -86,7 +76,6 @@ public class Main {
 			// 인접 노드 탐색
 			for (Node adNode : adList[currNodeNum]) {
 				if (!isVisited[adNode.nodeNum] && currCost + adNode.weight < dist[adNode.nodeNum]) {
-//					System.out.println("BBB");
 					dist[adNode.nodeNum] = currCost + adNode.weight;
 					pq.offer(new Node(adNode.nodeNum, dist[adNode.nodeNum]));
 				}
@@ -120,6 +109,6 @@ public class Main {
 		public String toString() {
 			return "Node [nodeNum=" + nodeNum + ", weight=" + weight + "]";
 		}
-		
+
 	}
 }
