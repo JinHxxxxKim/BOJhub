@@ -58,12 +58,11 @@ public class Solution {
 				connectCore(0, dir, 0, 0);
 			}
 			
+				
 			if(minCableLen == Integer.MAX_VALUE) {
-				System.out.println("#"+testCase+" 0");
-//				sb.append(String.format("#%d %d\n", testCase, 0));
+				sb.append(String.format("#%d %d\n", testCase, 0));
 			}else {
-				System.out.println("#"+testCase+" "+minCableLen);
-//				sb.append(String.format("#%d %d\n", testCase, minCableLen));
+				sb.append(String.format("#%d %d\n", testCase, minCableLen));
 			}
 			
 		}
