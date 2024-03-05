@@ -1,80 +1,57 @@
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
  * @author 김진형
- * 2차원 슬라이딩 윈도우 + 누적합
  * 
- * NxN의 공간, MxM의 윈도우
- * 
- * 1. 테스트 케이스의 개수 T입력받는다.
- * 2. N 과 M입력받는다.
- * 3. N 줄에 걸쳐 N x N 배열입력받는 동시에 2차원 누적합을 구한다.
- * 4. 슬라이딩 윈도우의 시작점은? 
- * 		=> padding을 누적합에 부여했을 시, [M, M]이 사직점이 된다.
- * 		언제까지?  
- * 			=> 시작점의 행이 N을 "초과"하면 종료(padding의 존재)
- * 5. 결과 출력
+ * 1. 파리의 마리수를 입력받으며, 각 위치까지의 누적합을 구한다.
+ * 2. (M, M)부터 (N, N)까지 슬라이딩윈도우를 통해 최대값을 갱신해나간다.
+ * 	2-1. 각 행이 끝나면, 행을 하나 증가시켜 탐색한다.
+ * 	2-2. 누적합: 자기자신 - 동일 행 - 동일 열 + 대각선
+ * 3. 최대값을 출력한다.
  */
 public class Solution {
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private static StringBuilder sb = new StringBuilder();
 	private static StringTokenizer st;
+
+	static int N, M;
+	static int[][] cumuSum; // 누적합 배열
 	
-	private static int N, M;
-	private static int[][] map;
-	private static int[][] cumulativeSum;
-	
-	public static void main(String[] args) throws Exception {	
+	public static void main(String[] args) throws Exception {
 		int TC = Integer.parseInt(br.readLine().trim());
-		for (int testCase = 1; testCase <= TC; testCase++) {
-			// N, M 입력받기
+		for (int testCase = 1; testCase <= TC; ++testCase) {
 			st = new StringTokenizer(br.readLine().trim());
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
-			
-			map = new int[N][N];
-			cumulativeSum = new int[N+1][N+1];
 
-			// map 정보 입력받기
-			for (int row = 0; row < N; ++row) {
+			// 누적합 배열의 경우, padding 존재
+			cumuSum = new int[N + 1][N + 1];
+
+			// 배열을 입력받음과 동시에, 누적합 계산
+			for (int row = 1; row < N + 1; ++row) {
 				st = new StringTokenizer(br.readLine().trim());
-				for (int col = 0; col < N; ++col) {
-					map[row][col] = Integer.parseInt(st.nextToken());
-					// 누적합까지 구하기
-					cumulativeSum[row+1][col+1] = cumulativeSum[row+1][col]
-												+ cumulativeSum[row][col+1]
-												+ map[row][col]
-												- cumulativeSum[row][col];
+				for (int col = 1; col < N + 1; ++col) {
+					cumuSum[row][col] = cumuSum[row - 1][col] + cumuSum[row][col - 1] - cumuSum[row - 1][col - 1]
+							+ Integer.parseInt(st.nextToken());
 				}
 			}
-			int pariCnt = Integer.MIN_VALUE;
-			int rearRow = M;
-			int rearCol = M;
-			
-			// 슬라이딩 윈도우 탐색 시작
-			// 좌 -> 우 로 탐색이므로 열의 종료는 중요X, 행의 종료가 중요
-			while(rearRow<=N) {
-				pariCnt = Math.max(pariCnt, cumulativeSum[rearRow][rearCol] 
-										  	- cumulativeSum[rearRow][rearCol-M]
-										  	- cumulativeSum[rearRow-M][rearCol]
-										  	+ cumulativeSum[rearRow-M][rearCol-M]);
-				// 윈도우 위치 조정
-				++rearCol;
-				if(rearCol>N) { // 열 초과
-					rearCol = M;
-					++rearRow;
+
+			// 누적합에 대해 슬라이딩 윈도우를 통해 최대 마리수 계산
+			// (M, M) 부터 시작 가능
+			int max = Integer.MIN_VALUE;
+			for (int row = M; row < N + 1; ++row) {
+				for (int col = M; col < N + 1; ++col) {
+					int currNum = cumuSum[row][col] - cumuSum[row - M][col] - cumuSum[row][col - M]
+							+ cumuSum[row - M][col - M];
+					max = Math.max(max, currNum);
 				}
 			}
-			// 출력
-			sb.append(String.format("#%d %d\n", testCase, pariCnt));
+
+			sb.append(String.format("#%d %d\n", testCase, max));
 		}
 		System.out.println(sb);
 	}
 }
-
-//for(int idx =0;idx<=N;++idx) {
-//	System.out.println(Arrays.toString(cumulativeSum[idx]));
-//}
