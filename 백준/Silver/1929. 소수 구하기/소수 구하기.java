@@ -34,7 +34,7 @@ public class Main {
 		int lastNum = (int) Math.sqrt(M) + 1;
 		Arrays.fill(isPrimeNumber, true);
 		isPrimeNumber[1] = false;
-		for (int number = 2; number <= M; ++number) {
+		for (int number = 2; number <= lastNum; ++number) {
 			if (isPrimeNumber[number]) {
 				// 해당 수를 제외한 모든 배수 = 합성수
 				int mulNum = 2;
