@@ -1,120 +1,102 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
+
+/**
+ * @author JinHyungKim
+ * 
+ * MST
+ * 
+ * 1. V, E를 입력 받는다.
+ * 2. 모든 간선을 입력받아 간선 우선순위 큐에 저장한다.
+ *   - 이 때, 우선순위 큐는 간선의 가중치가 낮은 간선이 우선순위가 높다
+ * 3. 우선순위 큐가 빌 때까지 반복한다.
+ *   3-1. 간선의 두 정점 모두 방문한 적이 있다면 PASS
+ *   3-2. 방문하지 않은 정점이 있다면 해당 정점을 방문처리 한 뒤, 가중치 합에 더한다.
+ * 4. 최종적으로 가중치의 합을 출력한다.
+ *
+ */
 public class Main {
-    private static int V;
-    private static int E;
+	static final StringBuilder sb = new StringBuilder();
+	static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static StringTokenizer st;
+	
+	static int V, E;
+	static int[] rootInfo;
+	
+	public static void main(String[] args) throws Exception {
+		st = new StringTokenizer(br.readLine().trim());
+		V = Integer.parseInt(st.nextToken());
+		E = Integer.parseInt(st.nextToken());
+		rootInfo = new int[V + 1];
+		PriorityQueue<Edge> pq = new PriorityQueue<>();
+		for (int cnt = 0; cnt < E; ++cnt) {
+			st = new StringTokenizer(br.readLine().trim());
+			int node1 = Integer.parseInt(st.nextToken());
+			int node2 = Integer.parseInt(st.nextToken());
+			int cost = Integer.parseInt(st.nextToken());
 
-    private static int[] rootInfo;
+			Edge e = new Edge(node1, node2, cost);
+			pq.offer(e);
+		}
 
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        V = Integer.parseInt(st.nextToken());
-        E = Integer.parseInt(st.nextToken());
+		for (int nodeNum = 1; nodeNum < V + 1; ++nodeNum) {
+			rootInfo[nodeNum] = nodeNum;
+		}
 
-        Edge[] edges = new Edge[E];
-        for (int i = 0; i < E; ++i) {
-            st = new StringTokenizer(br.readLine());
-            int node1 = Integer.parseInt(st.nextToken());
-            int node2 = Integer.parseInt(st.nextToken());
-            int weight = Integer.parseInt(st.nextToken());
-            edges[i] = new Edge(node1, node2, weight);
-        }
-        Arrays.sort(edges);
+		int costSum = 0;
+		while (!pq.isEmpty()) {
+			Edge currEdge = pq.poll();
+			int node1 = currEdge.node1;
+			int node2 = currEdge.node2;
+			int cost = currEdge.cost;
+			if (find(node1) != find(node2)) {
+				union(node1, node2);
+				costSum += cost;
+			}
+		}
+		System.out.println(costSum);
+	}
+	
+	
+    // 두 node의 집합을 union
+	static void union(int node1, int node2) {
+		int root1 = find(node1);
+		int root2 = find(node2);
+		
+		rootInfo[root1] = root2;
+	}
+	
+	// node의 root를 찾는 메소드
+	static int find(int node) {
+		if (node == rootInfo[node])
+			return node;
+		return rootInfo[node] = find(rootInfo[node]);
+	}
+	
+	static class Edge implements Comparable<Edge>{
+		int node1, node2;
+		int cost;
+		
+		public Edge(int node1, int node2, int cost) {
+			super();
+			this.node1 = node1;
+			this.node2 = node2;
+			this.cost = cost;
+		}
 
-        int ans = 0;
-        rootInfo = new int[V + 1];
-        for (int i = 1; i <= V; ++i) {
-            rootInfo[i] = i;
-        }
-        for (int edgeNum = 0; edgeNum < E; ++edgeNum) {
-            Edge currEdge = edges[edgeNum];
-            int n1 = currEdge.getNode1();
-            int n2 = currEdge.getNode2();
-            int w = currEdge.getWeight();
-            // Cycle 유효성 검사
-            int n1_root = find(n1);
-            int n2_root = find(n2);
-            if (n1_root == n2_root) {
-                // Cyclic
-                continue;
-            } else {
-                // Acyclic
-                union(n1, n2);
-                ans += w;
-            }
-        }
-        System.out.println(ans);
-    }
+		@Override
+		public int compareTo(Edge edge) {
+			return Integer.compare(cost, edge.cost);
+		}
 
-    private static void union(int n1, int n2) {
-        int n1_root = find(n1);
-        int n2_root = find(n2);
-        if (n1_root < n2_root) {
-            rootInfo[n2_root] = n1_root;
-        } else {
-            rootInfo[n1_root] = n2_root;
-        }
-    }
-
-    private static int find(int node) {
-        if (rootInfo[node] == node) {
-            return node;
-        } else {
-            return rootInfo[node] = find(rootInfo[node]);
-        }
-    }
-}
-
-class Edge implements Comparable<Edge>{
-    private int node1;
-    private int node2;
-    private int weight;
-
-    @Override
-    public String toString() {
-        return "Edge{" +
-                "node1=" + node1 +
-                ", node2=" + node2 +
-                ", weight=" + weight +
-                '}';
-    }
-
-    public Edge(int node1, int node2, int weight) {
-        this.node1 = node1;
-        this.node2 = node2;
-        this.weight = weight;
-    }
-
-    public int getNode1() {
-        return node1;
-    }
-
-    public void setNode1(int node1) {
-        this.node1 = node1;
-    }
-
-    public int getNode2() {
-        return node2;
-    }
-
-    public void setNode2(int node2) {
-        this.node2 = node2;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
-
-    @Override
-    public int compareTo(Edge edge) {
-        return this.weight - edge.weight;
-    }
+		@Override
+		public String toString() {
+			return "Edge [node1=" + node1 + ", node2=" + node2 + ", cost=" + cost + "]";
+		}
+		
+		
+	}
 }
