@@ -1,52 +1,38 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
+/**
+ * 1. N을 입력받고, N개의 수를 Set에 저장한다.
+ * 2. M개의 수를 입력받은 후, Set에 Contain한지 확인한다.
+ */
 public class Main {
-    static int[] array;
-    static StringBuilder sb;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static StringBuilder sb = new StringBuilder();
+    static int N, M;
+    static Set<Integer> set;
 
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        array = new int[N];
-        for (int i = 0; i < N; ++i) {
-            array[i] = Integer.parseInt(st.nextToken());
+    public static void main(String[] args) throws Exception{
+        N = Integer.parseInt(br.readLine().trim());
+        set = new HashSet<>();
+        st = new StringTokenizer(br.readLine().trim());
+        for (int idx = 0; idx < N; ++idx) {
+            set.add(Integer.parseInt(st.nextToken()));
         }
-        int M = Integer.parseInt(br.readLine());
-        int[] testCase = new int[M];
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < M; ++i) {
-            testCase[i] = Integer.parseInt(st.nextToken());
-        }
-        Arrays.sort(array);
-        sb = new StringBuilder();
-        for (int i = 0; i < M; ++i) {
-            binSearch(testCase[i]);
+        M = Integer.parseInt(br.readLine().trim());
+        st = new StringTokenizer(br.readLine().trim());
+        for (int idx = 0; idx < M; ++idx) {
+            int num = Integer.parseInt(st.nextToken());
+            if (set.contains(num)) {
+                sb.append(1);
+            }else{
+                sb.append(0);
+            }
+            sb.append("\n");
         }
         System.out.println(sb);
-    }
-
-    private static void binSearch(int targetNum) {
-        int frontIdx = 0;
-        int rearIdx = array.length - 1;
-        int midIdx = (frontIdx + rearIdx) / 2;
-
-        while (frontIdx <= rearIdx) {
-            if (array[midIdx] == targetNum) {
-                sb.append(1);
-                sb.append("\n");
-                return;
-            } else if (array[midIdx] > targetNum) {
-                rearIdx = midIdx - 1;
-            } else {
-                frontIdx = midIdx + 1;
-            }
-            midIdx = (frontIdx + rearIdx) / 2;
-        }
-        sb.append(0);
-        sb.append("\n");
     }
 }
