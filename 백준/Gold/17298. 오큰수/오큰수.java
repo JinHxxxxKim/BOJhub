@@ -3,44 +3,68 @@ import java.io.InputStreamReader;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+/**
+ * [오큰수] - BOJ
+ * Stack
+ *
+ * 1. 수열을 입력받는다.
+ * 2. 수열의 뒤에서부터 오큰수를 확인한다.
+ *   CASE 1. 스택이 비어있다
+ *     -> -1 출력 & 현재 확인 중인 수를 스택에 삽입
+ *   CASE 2. 스택이 비어있지 않다.
+ *     -> peek()한 수가 현재 수보다 클 때까지 poll()
+ *     -> peek()한 수가 현재 수보다 크다면 해당 수 출력
+ *     -> 현재 확인 중인 수 push()
+ */
 public class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static StringBuilder sb = new StringBuilder();
+
+    static int N;
+    static int[] numbers; // 수열
+    static int[] oNumbers; // 오큰수 배열
+    static Stack<Integer> stack; // 오큰수 판별 수열
+
     public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int[] array = new int[N];
-        int[] ans = new int[N];
-        for (int i = 0; i < N; ++i) {
-            array[i] = Integer.parseInt(st.nextToken());
+        // 변수 초기화 및 입력
+        N = Integer.parseInt(br.readLine().trim());
+        numbers = new int[N];
+        oNumbers = new int[N];
+        stack = new Stack<>();
+
+        st = new StringTokenizer(br.readLine().trim());
+        for (int idx = 0; idx < N; ++idx) {
+            numbers[idx] = Integer.parseInt(st.nextToken());
         }
 
-        StringBuilder sb = new StringBuilder();
-        Stack<Integer> stk = new Stack<>();
-        for (int i = N - 1; i >= 0; --i) {
-            int currNum = array[i];
-            if (stk.isEmpty()) {
-                stk.push(currNum);
-                ans[i] = -1;
-            } else {
-                while (!stk.isEmpty()) {
-                    if (stk.peek() > currNum) {
-                        ans[i] = stk.peek();
-                        stk.push(currNum);
-                        break;
-                    } else {
-                        stk.pop();
-                    }
+        // 로직 시작
+        // 1. 수열의 뒤에서부터 오큰수를 확인한다.
+        for (int idx = N - 1; idx >= 0; --idx) {
+            int currNumber = numbers[idx];
+
+            // CASE 2. 스택이 비어있지 않다.
+            while (!stack.isEmpty()) {
+                // peek()한 수가 현재 수보다 클 때까지 pop()
+                if (stack.peek() <= currNumber) {
+                    stack.pop();
+                }else {
+                    // peek()한 수가 현재 수보다 크다면 해당 수 출력
+                    oNumbers[idx] = stack.peek();
+                    stack.push(currNumber);
+                    break;
                 }
-                if (stk.isEmpty()) {
-                    stk.push(currNum);
-                    ans[i] = -1;
-                }
+
+            }
+            // CASE 1. 스택이 비어있다
+            if (stack.isEmpty()) {
+                oNumbers[idx] = -1;
+                stack.push(currNumber);
             }
         }
-        for (int i : ans) {
-            sb.append(i);
-            sb.append(" ");
+        for (int oNumber : oNumbers) {
+            sb.append(oNumber).append(" ");
         }
-        System.out.println(sb.toString().trim());
+        System.out.println(sb);
     }
 }
