@@ -15,12 +15,10 @@ public class Main {
         dest = Integer.parseInt(st.nextToken());
 
         int[] dist = new int[100001];
-        boolean[] visited = new boolean[100001];
         Arrays.fill(dist, Integer.MAX_VALUE);
 
         Queue<Integer> q = new ArrayDeque<>();
         q.offer(src);
-        visited[src] = true;
         dist[src] = 0;
         while (!q.isEmpty()) {
             int currNum = q.poll();
@@ -29,28 +27,16 @@ public class Main {
             }
             // 범위 check
             if (currNum + 1 < 100001 && dist[currNum + 1] > dist[currNum]) {
-                // 목적지 도착
-//                if (currNum + 1 == dest) {
-//                    ++ans;
-//                }
                 dist[currNum + 1] = dist[currNum] + 1;
                 q.offer(currNum + 1);
             }
 
             if (currNum - 1 >= 0 && dist[currNum - 1] > dist[currNum]) {
-                // 목적지 도착
-//                if (currNum - 1 == dest) {
-//                    ++ans;
-//                }
                 dist[currNum - 1] = dist[currNum] + 1;
                 q.offer(currNum - 1);
             }
 
             if (currNum * 2 < 100001 && dist[currNum * 2] > dist[currNum]) {
-                // 목적지 도착
-//                if (currNum * 2 == dest) {
-//                    ++ans;
-//                }
                 dist[currNum * 2] = dist[currNum] + 1;
                 q.offer(currNum * 2);
             }
