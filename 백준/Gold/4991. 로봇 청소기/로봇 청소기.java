@@ -54,6 +54,8 @@ public class Main {
 
             // 완전탐색 (순열)
             minDist = new int[trashList.size() + 1][trashList.size()];
+            boolean canClean = false;
+
             // 각 쓰래기에서 다른 쓰래기까지의 최소 거리를 구한다.
             for (int i = 0; i < trashList.size() + 1; ++i) {
                 Node src = null;
@@ -62,6 +64,7 @@ public class Main {
                 }else{
                     src = trashList.get(i - 1);
                 }
+
 
                 for (int j = 0; j < trashList.size(); ++j) {
                     Node target = trashList.get(j);
@@ -76,6 +79,7 @@ public class Main {
                         Node currNode = q.poll();
                         if (currNode.row == target.row && currNode.col == target.col) {
                             // 목표지점 도달
+                            canClean = true;
                             minDist[i][j] = currNode.dist;
                             break;
                         }
@@ -100,14 +104,17 @@ public class Main {
                     }
                 }
             }
-
-            elements = new int[trashList.size()];
-            selected = new boolean[trashList.size()];
-            permutation(0);
-            if (ans != Integer.MAX_VALUE) {
-                sb.append(ans).append("\n");
-            } else {
+            if(!canClean){
                 sb.append(-1).append("\n");
+            }else{
+                elements = new int[trashList.size()];
+                selected = new boolean[trashList.size()];
+                permutation(0);
+                if (ans != Integer.MAX_VALUE) {
+                    sb.append(ans).append("\n");
+                } else {
+                    sb.append(-1).append("\n");
+                }
             }
         }
         System.out.println(sb);
