@@ -7,6 +7,7 @@ public class Main {
 
     static int n, d, k, c;
     static int[] array;
+    static int[] isSelected;
 
     public static void main(String[] args) throws Exception {
         // INPUT
@@ -17,6 +18,7 @@ public class Main {
         c = Integer.parseInt(st.nextToken());
 
         array = new int[n];
+        isSelected = new int[d + 1];
         for (int idx = 0; idx < n; ++idx) {
             array[idx] = Integer.parseInt(br.readLine().trim());
 
@@ -25,28 +27,51 @@ public class Main {
         int l = 0;
         int r = k;
         int ans = Integer.MIN_VALUE;
-        Set<Integer> set = new HashSet<>();
+        int cnt = 0;
         for (int idx = 0; idx < k; ++idx) {
-            set.add(array[idx]);
+            if (isSelected[array[idx]] == 0) {
+                ++cnt;
+            }
+            isSelected[array[idx]]++;
+
+            if (isSelected[c] != 0) {
+                ans = Math.max(ans, cnt);
+            } else {
+                ans = Math.max(ans, cnt + 1);
+            }
         }
+
         // l포함, r피포함
         while (l < n) {
+            // l빼고, r더하기
+            isSelected[array[l]]--;
+            if (isSelected[array[l]] == 0) {
+                --cnt;
+            }
+            if (isSelected[array[r]] == 0) {
+                ++cnt;
+            }
+            isSelected[array[r]]++;
 //            System.out.println("l = " + l + " | " + "r = " + r);
-//            System.out.println("set = " + set);
+//            System.out.println("cnt = " + cnt);
+
+//            for (int idx = 0; idx < isSelected.length; ++idx) {
+//                if (isSelected[idx] != 0) {
+//                    System.out.print(idx + "(" + isSelected[idx] + ")" + " | ");
+//                }
+//            }
+//            System.out.println();
+//            System.out.println("isSelected[c] = " + isSelected[c]);
+//            System.out.println("==============");
             // 보너스 쿠폰 계산
-            if (set.contains(c)) {
-                ans = Math.max(ans, set.size());
+            if (isSelected[c] != 0) {
+                ans = Math.max(ans, cnt);
             } else {
-                ans = Math.max(ans, set.size() + 1);
+                ans = Math.max(ans, cnt + 1);
             }
 
             r = (r + 1) % n;
             ++l;
-            set.clear();
-            for (int cnt = 0; cnt < k; ++cnt) {
-                set.add(array[(l + cnt) % n]);
-            }
-
         }
         System.out.println(ans);
     }
