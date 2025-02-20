@@ -58,7 +58,7 @@ public class Main {
             dfs(nextNode);
 
         }
-        visited[node] = false;
+        //visited[node] = false;
         cycleChk[node] = true;
     }
 }
