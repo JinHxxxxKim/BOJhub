@@ -7,10 +7,7 @@ public class Main {
     static StringTokenizer st;
 
     static int N, Q;
-    static int[][] dist;
     static List<Edge>[] adList;
-    static boolean[] visited;
-    static int start;
 
     static class Edge {
         int num;
@@ -41,45 +38,53 @@ public class Main {
             adList[node1].add(new Edge(node2, weight));
             adList[node2].add(new Edge(node1, weight));
         }
-        dist = new int[N + 1][N + 1];
 
         // SOLUTION
         // 1번 노드부터 N번 노드까지 시작점으로 하여 최소비용(유사도)을 계산한다.
-        for (int startNode = 1; startNode <= N; ++startNode) {
-            visited = new boolean[N + 1];
-            start = startNode;
-            dfs(startNode, 0);
-        }
         for (int qCnt = 0; qCnt < Q; ++qCnt) {
             st = new StringTokenizer(br.readLine().trim());
             int k = Integer.parseInt(st.nextToken()); // 최소유사도
             int v = Integer.parseInt(st.nextToken()); // 시작점
 
-            int ans = 0;
-            for (int targetNodeNum = 1; targetNodeNum <= N; ++targetNodeNum) {
-                if (targetNodeNum == v) continue;
-                if (dist[v][targetNodeNum] >= k) ++ans;
-            }
+            int ans = bfs(k, v);
             sb.append(ans).append("\n");
         }
         System.out.print(sb);
     }
 
-    static void dfs(int nodeNum, int currWeight) {
-        visited[nodeNum] = true;
-        for (Edge edge : adList[nodeNum]) {
-            int nextNodeNum = edge.num;
-            int nextWeight = edge.weight;
-            if(visited[nextNodeNum]) continue;
-            // 시작노드일 경우
-            if (currWeight == 0) {
-                dist[start][nextNodeNum] = nextWeight;
-                dfs(nextNodeNum, nextWeight);
-            } else {
-                int minWeight = Math.min(currWeight, nextWeight);
-                dist[start][nextNodeNum] = minWeight;
-                dfs(nextNodeNum, minWeight);
+    static int bfs(int k, int startNode) {
+        int ans = 0;
+        boolean[] visited = new boolean[N + 1];
+        Queue<Edge> q = new LinkedList<>();
+        q.offer(new Edge(startNode, 0));
+        visited[startNode] = true;
+        while (!q.isEmpty()) {
+            Edge currNode = q.poll();
+            int currNodeNum = currNode.num;
+            int currWeight = currNode.weight;
+            // 연결노드 확인
+            for (Edge next : adList[currNodeNum]) {
+                int nextNodeNum = next.num;
+                int nextWeight = next.weight;
+
+                // 방문여부 검증
+                if (visited[nextNodeNum]) continue;
+                // 최소비용 검증
+                if(nextWeight < k) continue;
+
+                visited[nextNodeNum] = true;
+                // 현재 노드가 시작점일 경우 별도 분기처리
+                if (currWeight == 0) {
+                    int minCost = next.weight;
+                    q.offer(new Edge(next.num, minCost));
+                } else {
+                    // 현재 노드까지의 비용과 다음 노드로 가는 비용 중 최소값을 선택
+                    int minCost = Math.min(currWeight, next.weight);
+                    q.offer(new Edge(next.num, minCost));
+                }
+                ++ans;
             }
         }
+        return ans;
     }
 }
