@@ -1,47 +1,53 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    public static int[] arr;
-    public static int N;
-    public static int R;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+    static StringTokenizer st;
 
-    public static int[] select;
-    public static boolean[] isSelected;
+    static int N, M;
+    static int[] elements;
+    static int[] selectElements;
+    static boolean[] selected;
 
-    public static StringBuilder sb;
     public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        st = new StringTokenizer(br.readLine().trim());
         N = Integer.parseInt(st.nextToken());
-        R = Integer.parseInt(st.nextToken());
-        arr = new int[N + 1];
-        for (int i = 1; i <= N; ++i) {
-            arr[i] = i;
+        M = Integer.parseInt(st.nextToken());
+        elements = new int[N];
+        selectElements = new int[M];
+        selected = new boolean[N];
+        for (int idx = 0; idx < N; ++idx) {
+            elements[idx] = idx + 1;
         }
-        select = new int[R];
-        isSelected = new boolean[N+1];
-        sb = new StringBuilder();
-        combination(0, 1);
+
+        permutation(0, 0);
+        System.out.print(sb);
     }
 
-    private static void combination(int size, int idx) {
-        if (size == R) {
-            for (int i = 0; i < select.length; ++i) {
-                sb.append(select[i] + " ");
+    private static void permutation(int selectCnt, int selIdx) {
+        // 기저조건
+        if (selectCnt == M) {
+            for (int idx = 0; idx < M; ++idx) {
+                sb.append(selectElements[idx]).append(" ");
             }
-            System.out.println(sb.toString());
-            sb = new StringBuilder();
+            sb.append("\n");
             return;
         }
-        for (int i = idx; i <= N; ++i) {
-            if (isSelected[i])
+
+        for (int idx = selIdx; idx < N; ++idx) {
+            if (selected[idx]) {
                 continue;
-            isSelected[i] = true;
-            select[size] = i;
-            combination(size + 1, i + 1);
-            isSelected[i] = false;
+            }
+            // 전처리
+            selected[idx] = true;
+            selectElements[selectCnt] = elements[idx];
+            
+            permutation(selectCnt + 1, idx);
+            // 후처리
+            selected[idx] = false;
         }
     }
+
 }
