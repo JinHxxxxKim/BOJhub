@@ -1,55 +1,43 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
-import java.util.jar.JarEntry;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    private static int N; // 도시의 수
-    private static int M; // 예행계획 도시 수
 
-    private static int[][] adMatrix;
-    private static int[] rootInfo;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+    static StringTokenizer st;
 
-    private static int[] tripSeq;
+    static int N, M;
+    static int[] root;
 
-    public static void main(String[] args) throws Exception{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine());
-        M = Integer.parseInt(br.readLine());
-        adMatrix = new int[N][N];
-        for (int i = 0; i < N; ++i) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; ++j) {
-                adMatrix[i][j] = Integer.parseInt(st.nextToken());
-            }
-        }
-        tripSeq = new int[M];
-
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < M; ++i) {
-            tripSeq[i] = Integer.parseInt(st.nextToken());
-        }
-        // 모든 여행경로에 속하는 노드가 동일한 루트를 가지고 있어야함
-        // 그럼, 노드에 대한 루트 노드 정보가 필요
-
-        rootInfo = new int[N];
-        for (int i = 0; i < N; ++i) {
-            rootInfo[i] = i;
+    public static void main(String[] args) throws Exception {
+        N = Integer.parseInt(br.readLine().trim());
+        M = Integer.parseInt(br.readLine().trim());
+        root = new int[N];
+        for (int idx = 0; idx < N; ++idx) {
+            root[idx] = idx;
         }
 
-        for (int i = 0; i < N; ++i) {
-            for (int j = 0; j < N; ++j) {
-                if (adMatrix[i][j] == 1) {
-                    // union
-                    union(i, j);
+        for (int srcNode = 0; srcNode < N; ++srcNode) {
+            st = new StringTokenizer(br.readLine().trim());
+            for (int targetNode = 0; targetNode < srcNode; ++targetNode) {
+                int con = Integer.parseInt(st.nextToken());
+                if (con == 0) {
+                    continue;
                 }
+                union(srcNode, targetNode);
             }
         }
-        
-        int root = rootInfo[tripSeq[0]-1];
-        for (int i = 0; i < M; ++i) {
-            if (root != rootInfo[tripSeq[i] - 1]) {
+
+        st = new StringTokenizer(br.readLine().trim());
+        int[] course = new int[M];
+        for (int cnt = 0; cnt < M; ++cnt) {
+            course[cnt] = Integer.parseInt(st.nextToken()) - 1;
+        }
+
+        int cmpRoot = find(course[0]);
+        for (int cnt = 1; cnt < M; ++cnt) {
+            if (find(course[cnt]) != cmpRoot) {
                 System.out.println("NO");
                 return;
             }
@@ -57,23 +45,20 @@ public class Main {
         System.out.println("YES");
     }
 
-    private static void union(int node1, int node2) {
-        int node1_root = find(node1);
-        int node2_root = find(node2);
-        if (node1_root != node2_root) {
-            if (node1_root < node2_root) {
-                rootInfo[node2_root] = node1_root;
+    static void union(int node1, int node2) {
+        int node1Root = find(node1);
+        int node2Root = find(node2);
+        if (node1Root != node2Root) {
+            if (node1Root < node2Root) {
+                root[node2Root] = node1Root;
             } else {
-                rootInfo[node1_root] = node2_root;
+                root[node1Root] = node2Root;
             }
         }
     }
 
-    private static int find(int node) {
-        if (rootInfo[node] == node) {
-            return node;
-        } else {
-            return rootInfo[node] = find(rootInfo[node]);
-        }
+    static int find(int node) {
+        if(node == root[node]) return node;
+        else return root[node] = find(root[node]);
     }
 }
