@@ -12,28 +12,22 @@ public class Main {
         String src = br.readLine().trim();
         String target = br.readLine().trim();
         ans = false;
-        sol(src, target);
+        sb = new StringBuilder(target);
 
-        if (ans) {
+        while (sb.length() > src.length()) {
+            if (sb.toString().charAt(sb.length() - 1) == 'A') {
+                sb.deleteCharAt(sb.length() - 1);
+            } else {
+                sb.deleteCharAt(sb.length() - 1);
+                sb.reverse();
+            }
+        }
+
+        if (sb.toString().equals(src)) {
             System.out.println(1);
         } else {
             System.out.println(0);
         }
-    }
 
-    private static void sol(String src, String target) {
-//        System.out.println("src = " + src);
-        if (src.length() == target.length()) {
-            if (src.equals(target)) {
-                ans = true;
-            }
-            return;
-        }
-        if (!target.contains(src) && !target.contains(new StringBuilder(src).reverse())) {
-            return;
-        }
-
-        sol(src + "A", target);
-        sol(new StringBuilder(src).reverse() + "B", target);
     }
 }
