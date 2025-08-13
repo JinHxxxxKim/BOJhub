@@ -1,94 +1,74 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
-public class Main {
-    private static int V;
-    private static int E;
+public class Main{
+    static StringTokenizer st;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
 
-    private static boolean[] visited;
-    private static int[] dist;
+    static int N, M;
+    static int start, end;
+    static List<Edge>[] adList;
+    static int[] dist;
+    static boolean[] visited;
 
-    private static ArrayList<Edge1916>[] adList;
+    public static void main(String args[]) throws Exception{
+        // INPUT
+        N = Integer.parseInt(br.readLine().trim());
+        M = Integer.parseInt(br.readLine().trim());
 
-    public static void main(String[] args) throws Exception{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        V = Integer.parseInt(br.readLine());
-        E = Integer.parseInt(br.readLine());
-
-        visited = new boolean[V + 1];
-        dist = new int[V + 1];
-        adList = new ArrayList[V + 1];
-        for (int i = 1; i <= V; ++i) {
-            adList[i] = new ArrayList<>();
-        }
+        adList = new ArrayList[N + 1];
+        dist = new int[N + 1];
+        visited = new boolean[N + 1];
         Arrays.fill(dist, Integer.MAX_VALUE);
-        for (int i = 0; i < E; ++i) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            int n1 = Integer.parseInt(st.nextToken());
-            int n2 = Integer.parseInt(st.nextToken());
-            int weight = Integer.parseInt(st.nextToken());
 
-            adList[n1].add(new Edge1916(n2, weight));
+        for(int idx = 1; idx <= N; ++idx){
+            adList[idx] = new ArrayList<>();
         }
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int srcNode = Integer.parseInt(st.nextToken());
-        int destNode = Integer.parseInt(st.nextToken());
-        
-        PriorityQueue<Edge1916> pq = new PriorityQueue<>();
-        pq.offer(new Edge1916(srcNode, 0));
-        dist[srcNode] = 0;
-        while (!pq.isEmpty()) {
-            Edge1916 temp = pq.poll();
-            int currNodeNum = temp.getNodeNum();
-            int currWeight = temp.getWeight();
-            if (visited[currNodeNum]) {
-                continue;
-            }
-            if (currNodeNum == destNode) {
-                break;
-            }
-            visited[currNodeNum] = true;
-            for (Edge1916 edge : adList[currNodeNum]) {
-                int nextNodeNum = edge.getNodeNum();
-                int cost = edge.getWeight();
-                if (visited[nextNodeNum]) {
-                    continue;
+        for(int cnt = 0; cnt < M; ++cnt){
+            st = new StringTokenizer(br.readLine().trim());
+            int src = Integer.parseInt(st.nextToken());
+            int dest = Integer.parseInt(st.nextToken());
+            int cost = Integer.parseInt(st.nextToken());
+            adList[src].add(new Edge(dest, cost));
+        }
+        st = new StringTokenizer(br.readLine().trim());
+        start = Integer.parseInt(st.nextToken());
+        end = Integer.parseInt(st.nextToken());
+
+        // LOGIC
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        pq.offer(new Edge(start, 0));
+        dist[start] = 0;
+        while(!pq.isEmpty()){
+            Edge curr = pq.poll();
+            if(curr.nodeNum == end) break;
+            if(visited[curr.nodeNum]) continue;
+            visited[curr.nodeNum] = true;
+            for(Edge next : adList[curr.nodeNum]){
+                if(visited[next.nodeNum]) continue;
+                if(curr.cost + next.cost < dist[next.nodeNum]){
+                    dist[next.nodeNum] = curr.cost + next.cost;
+                    pq.offer(new Edge(next.nodeNum, dist[next.nodeNum]));
                 }
-                dist[nextNodeNum] = Math.min(dist[nextNodeNum], dist[currNodeNum] + cost);
-                pq.offer(new Edge1916(nextNodeNum, dist[nextNodeNum]));
             }
         }
-        //System.out.println(Arrays.toString(dist));
-        System.out.println(dist[destNode]);
-        
-        //System.out.println("dist[destNode] = " + dist[destNode]);
-    }
-}
+        System.out.println(dist[end]);
 
-class Edge1916 implements Comparable<Edge1916> {
-    private int nodeNum;
-    private int weight;
-
-    public Edge1916(int nodeNum, int weight) {
-        this.nodeNum = nodeNum;
-        this.weight = weight;
     }
 
-    public int getNodeNum() {
-        return nodeNum;
-    }
+    static class Edge implements Comparable<Edge>{
+        int nodeNum;
+        int cost;
+        public Edge(int nodeNum, int cost){
+            this.nodeNum = nodeNum;
+            this.cost = cost;
+        }
 
-    public int getWeight() {
-        return weight;
-    }
-
-    @Override
-    public int compareTo(Edge1916 edge1916) {
-        return this.weight - edge1916.getWeight();
+        @Override
+        public int compareTo(Edge e){
+            return this.cost - e.cost;
+        }
     }
 }
