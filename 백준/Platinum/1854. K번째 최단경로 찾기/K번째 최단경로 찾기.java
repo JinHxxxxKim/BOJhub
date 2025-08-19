@@ -38,7 +38,7 @@ public class Main {
             int currNum = curr.num;
             int currCost = curr.cost;
             
-            if(dist[currNum].size() >= k){
+            if(dist[currNum].size() > k){
                 continue;
             }
             
