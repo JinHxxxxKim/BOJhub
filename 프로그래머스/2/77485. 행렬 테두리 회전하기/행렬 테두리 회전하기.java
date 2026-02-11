@@ -30,46 +30,48 @@ class Solution {
     }
     
     public int rotate(int[][] matrix, int[] currQuery){
+        // 좌표 보정
         int row1 = currQuery[0] - 1;
         int col1 = currQuery[1] - 1;
         int row2 = currQuery[2] - 1;
         int col2 = currQuery[3] - 1;
-
-        int[] dx = {0, 1, 0, -1};   // 우, 하, 좌, 상
+        
+        int[] dx = {0, 1, 0, -1};
         int[] dy = {1, 0, -1, 0};
-
+        
+        // 시계방향 회전(1 ≤ x1 < x2 ≤ rows, 1 ≤ y1 < y2 ≤ columns)
+        // 반드시 좌상단부터 우하단으로 진행
         int currRow = row1;
         int currCol = col1;
-        int dir = 0;
-
+        boolean isFirst = true;
+        int dir = 0; // 초기방향 설정(오른쪽)
         int prev = matrix[currRow][currCol];
-        int min = prev;
-
-        boolean first = true;
-
-        while (first || !(currRow == row1 && currCol == col1)) {
-            first = false;
-
+        int temp = 0;
+        int ret = matrix[currRow][currCol];
+        
+        // 다시 원래 위치로 돌아올떄까지 반복
+        while(!(currRow == row1 && currCol == col1) || isFirst ) {
+            if(isFirst) isFirst = false;
+            
             int nextRow = currRow + dx[dir];
             int nextCol = currCol + dy[dir];
-
-            // 범위 벗어나면 방향 전환
-            if (nextRow < row1 || nextRow > row2 || nextCol < col1 || nextCol > col2) {
+            // 범위 검증
+            if(nextRow < row1 || nextRow > row2 || nextCol < col1 || nextCol > col2){
                 dir = (dir + 1) % 4;
                 nextRow = currRow + dx[dir];
                 nextCol = currCol + dy[dir];
             }
-
-            int temp = matrix[nextRow][nextCol];
+            
+            temp = matrix[nextRow][nextCol];
             matrix[nextRow][nextCol] = prev;
             prev = temp;
-
-            min = Math.min(min, prev);
-
+            
+            ret = Math.min(ret, prev);
             currRow = nextRow;
             currCol = nextCol;
         }
-
-        return min;
+        
+        
+        return ret;
     }
 }
