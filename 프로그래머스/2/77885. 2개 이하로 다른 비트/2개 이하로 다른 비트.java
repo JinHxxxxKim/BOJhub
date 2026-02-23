@@ -14,17 +14,21 @@ class Solution {
             // 홀수 
             int[] bitArray = toBitString(numbers[idx]);
             int zeroIdx = 50;
+            // 가장 오른쪽 0을 1로 변환
             for(int bitIdx = 50; bitIdx >= 0; --bitIdx) {
                 if(bitArray[bitIdx] == 1) {
                     continue;
                 }
+                // 변환 및 인덱스 저장
                 bitArray[bitIdx] = 1;
                 zeroIdx = bitIdx;
                 break;
             }
             
+            // zero인덱스 기준 가장 왼쪽 1을 0으로 변환
             for(int bitIdx = zeroIdx + 1; bitIdx < 51; ++bitIdx) {
                 if(bitArray[bitIdx] == 0) continue;
+                // 변환
                 bitArray[bitIdx] = 0;
                 break;
             }
