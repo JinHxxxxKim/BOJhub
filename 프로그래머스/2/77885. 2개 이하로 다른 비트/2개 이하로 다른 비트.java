@@ -1,5 +1,5 @@
 import java.util.*;
-
+ 
 class Solution {
     public long[] solution(long[] numbers) {
         long[] answer = new long[numbers.length];
@@ -33,6 +33,7 @@ class Solution {
         return answer;
     }
     
+    // 10진수 이진수 배열 변환
     public int[] toBitString(long number) {
         int[] ret = new int[51];
         int idx = 50;
@@ -43,6 +44,7 @@ class Solution {
         return ret;
     }
     
+    // 이진수 배열 10진수 변환
     public long toLong(int[] array) {
         long ret = 0L;
         long sumNum = 2L;
